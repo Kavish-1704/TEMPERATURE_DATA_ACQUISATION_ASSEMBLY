@@ -1,0 +1,25 @@
+
+Debug/
+Release/
+.settings/
+*.launch
+*.su
+*.o
+*.d
+*.elf
+*.map
+*.list
+*.bin
+*.hex
+*.ld
+.mxproject
+STM32F446RETX_FLASH.ld
+STM32F446RETX_RAM.ld
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+# --- macOS System Files ---
+.DS_Store
+._*
