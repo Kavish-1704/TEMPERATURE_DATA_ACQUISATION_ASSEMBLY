@@ -47,7 +47,7 @@ pip install -r requirements.txt
 
 # Run the plotter
 
-## 📂 Project Structure
+ 📂 Project Structure
 * **`Src/main.s`**: The entry point. Handles the main infinite loop, coordinates the "Red Light/Green Light" synchronization between CPU and DMA, and triggers data transmission.
 * **`Src/DMA.s`**: Configures Direct Memory Access (DMA2 for ADC, DMA1 for UART) to handle data transfer without CPU intervention.
 * **`Src/ADC.s`**: Sets up the Analog-to-Digital Converter to read the internal temperature sensor.
