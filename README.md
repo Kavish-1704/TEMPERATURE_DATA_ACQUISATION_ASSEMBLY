@@ -44,10 +44,18 @@ Ensure you have Python installed, then set up the environment:
 
 
 
-# Install dependencies
-pip install -r requirements.txt
+## 📦 Install Dependencies
 
-# Run the plotter
+To run the real-time visualization tool (`plot_temp.py`), you need Python 3 installed.
+
+### 1. Set up a Virtual Environment (Recommended)
+It is best practice to run this project in a virtual environment to avoid conflicts.
+
+**On macOS / Linux:**
+```bash
+python3 -m venv stm32_env
+source stm32_env/bin/activate
+```
 
 
 
