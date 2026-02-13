@@ -2,8 +2,9 @@
 
 A bare-metal embedded system that reads temperature data using **pure Assembly Language** and visualizes it in real-time using Python.
 
-![Project Graph](Src/TEMP1.png) 
-*(Add a screenshot of your Python plot here!)*
+![Project Graph(1)](Src/TEMP1.png) 
+![Project Graph)2)](Src/TEMP2.png) 
+
 
 ## 🚀 Project Overview
 This project demonstrates low-level embedded engineering capabilities by implementing a complete Data Acquisition System without using any C/C++ HAL (Hardware Abstraction Libraries). 
