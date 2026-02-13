@@ -55,6 +55,7 @@ It is best practice to run this project in a virtual environment to avoid confli
 ```bash
 python3 -m venv stm32_env
 source stm32_env/bin/activate
+python plot_temp.py
 ```
 
 
@@ -84,5 +85,5 @@ source stm32_env/bin/activate
 
 ## 📜 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-python plot_temp.py
+
 
