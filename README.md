@@ -54,19 +54,14 @@ pip install -r requirements.txt
 
 ## 📂 Project Structure
 
-
-TEMPERATURE_DATA_ACQUISITION_ASSEMBLY/
-├── Src/
-│   ├── main.s       # Main Loop & Race Condition Logic
-│   ├── DMA.s        # Direct Memory Access Configuration
-│   ├── ADC.s        # Analog Sensor Setup
-│   ├── Tim2.s       # 100Hz Hardware Timer
-│   ├── lab_uart.s   # Serial Driver (Tx/Rx)
-│   └── Itoa.s       # Integer to ASCII Conversion
-├── plot_temp.py     # Python Real-Time Grapher
-├── requirements.txt # Python Library List
-├── graph.png        # Screenshot of the plot
-└── README.md        # This file
+* **`Src/main.s`**: The entry point. Handles the main infinite loop, coordinates the synchronization between CPU and DMA, and triggers data transmission.
+* **`Src/DMA.s`**: Configures Direct Memory Access (DMA2 for ADC, DMA1 for UART) to handle data transfer without CPU intervention.
+* **`Src/ADC.s`**: Sets up the Analog-to-Digital Converter to read the internal temperature sensor.
+* **`Src/lab_uart.s`**: Low-level UART driver to handle serial communication with the host computer.
+* **`Src/Tim2.s`**: Configures hardware Timer 2 to trigger ADC conversions at a precise 100Hz frequency.
+* **`Src/Itoa.s`**: Custom assembly routine to convert raw Integer values into ASCII strings.
+* **`plot_temp.py`**: Python script using `matplotlib` to visualize the temperature data in real-time.
+* **`requirements.txt`**: List of Python dependencies.
 
 
 ## 🐛 Challenges Solved
