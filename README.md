@@ -20,8 +20,8 @@ The system reads an analog temperature sensor, processes the data via DMA, and t
 
 ## 🛠️ Hardware & Software
 * **Microcontroller:** STM32F446RE (Nucleo-64 Board)
-* **Sensor:** Internal Temperature Sensor (or LM35)
-* **Language:** ARM Assembly (`.s` files)
+* **Sensor:** Internal Temperature Sensor
+* **Language:** ARM Assembly
 * **Host Software:** Python 3.9+ (Matplotlib, PySerial)
 * **IDE:** STM32CubeIDE
 
