@@ -1,90 +1,99 @@
-
 .syntax unified
 .thumb
 .cpu cortex-m4
 
-
 .global UART_init
 .global UART_SendChar
 
-
-// base addresses 
-.equ RCC_BASE, 0x40023800
+/* ==============================================================================
+   OFFSETS & CONSTANTS
+   ============================================================================== */
+.equ RCC_BASE,    0x40023800
 .equ RCC_AHB1ENR, 0x30
 .equ RCC_APB1ENR, 0x40
-.equ GPIOA_BASE, 0x40020000
+
+.equ GPIOA_BASE,  0x40020000
 .equ GPIOA_MODER, 0x00
-.equ GPIOA_AFRL,0x20
+.equ GPIOA_AFRL,  0x20
+
 .equ USART2_BASE, 0x40004400
-.equ USART2_BRR, 0x08
-.equ USART_CR1, 0x0C
-.equ USART_SR, 0x00
-.equ USART_DR, 0x04
-.equ USART2_CR3,0x14
+.equ USART2_BRR,  0x08
+.equ USART_CR1,   0x0C
+.equ USART_SR,    0x00
+.equ USART_DR,    0x04
+.equ USART2_CR3,  0x14
 
-
-
+/* ==============================================================================
+   UART INITIALIZATION (9600 Baud @ 16MHz)
+   ============================================================================== */
 UART_init:
-PUSH {LR}
-// ENABLING THE CLOCK
+    PUSH {LR}
 
-LDR R0, =RCC_BASE
-//GPIOA
-LDR R1,[R0,#RCC_AHB1ENR]
-ORR R1,R1, #(1<<0)
-STR R1,[R0,#RCC_AHB1ENR]
-// USART2
-LDR R1,[R0,#RCC_APB1ENR]
-ORR R1,R1,#(1<<17)
-STR R1,[R0,#RCC_APB1ENR]
+    /* 1. ENABLE CLOCKS */
+    LDR R0, =RCC_BASE
 
+    /* Enable GPIOA (Bit 0) */
+    LDR R1, [R0, #RCC_AHB1ENR]
+    ORR R1, R1, #(1<<0)
+    STR R1, [R0, #RCC_AHB1ENR]
 
-// SETTING PA2 AS AN ALTERNATE FUNCTION
-
-LDR R0, =GPIOA_BASE
-LDR R1, [R0,#GPIOA_MODER]
-BIC R1,R1,#(3<<4)
-ORR R1,R1,#(2<<4)
-STR R1,[R0,#GPIOA_MODER]
-
-//CONNECTING THE PA2 TO USART
-LDR R1, [R0,#GPIOA_AFRL]
-BIC R1, R1,#(0xF<<8)
-ORR R1,R1,#(0x7<<8)
-STR R1,[R0,#GPIOA_AFRL]
-
-// SETTING THE BAUD RATE
-LDR R0, =USART2_BASE
-LDR R1, =0x0683
-STR R1,[R0,#USART2_BRR]
-
-//ENABLING THE DMA TRANSMITTER
-LDR R1, [R0,#USART2_CR3]
-ORR R1,R1,#(1<< 7)
-
-STR R1,[R0,#USART2_CR3]
+    /* Enable USART2 (Bit 17) */
+    LDR R1, [R0, #RCC_APB1ENR]
+    ORR R1, R1, #(1<<17)
+    STR R1, [R0, #RCC_APB1ENR]
 
 
+    /* 2. CONFIGURE GPIO PA2 (TX) */
+    LDR R0, =GPIOA_BASE
+
+    /* Set PA2 to Alternate Function Mode (10) */
+    LDR R1, [R0, #GPIOA_MODER]
+    BIC R1, R1, #(3<<4)     /* Clear Bits 4,5 */
+    ORR R1, R1, #(2<<4)     /* Set Bit 5 (10) */
+    STR R1, [R0, #GPIOA_MODER]
+
+    /* Set PA2 to AF7 (USART2) */
+    LDR R1, [R0, #GPIOA_AFRL]
+    BIC R1, R1, #(0xF<<8)   /* Clear Bits 8-11 */
+    ORR R1, R1, #(0x7<<8)   /* Set to 0111 (AF7) */
+    STR R1, [R0, #GPIOA_AFRL]
 
 
+    /* 3. CONFIGURE USART2 */
+    LDR R0, =USART2_BASE
 
-// TURNING ON THE UART
+    /* Set Baud Rate: 9600 @ 16MHz --> 0x0683 */
+    LDR R1, =0x0683
+    STR R1, [R0, #USART2_BRR]
 
-LDR R1, [R0,#USART_CR1]
-ORR R1,R1,#(1<<13)// USART ENABLE 
-ORR R1,R1,#(1<<3)// TRANSMITTER ENABLE
-STR R1,[R0,#USART_CR1]
+    /* Enable DMA Transmitter (DMAT) */
+    LDR R1, [R0, #USART2_CR3]
+    ORR R1, R1, #(1<<7)
+    STR R1, [R0, #USART2_CR3]
 
-POP {PC}
+    /* Enable UART (UE) & Transmitter (TE) */
+    /* Note: We Clear CR1 first to be safe */
+    LDR R1, [R0, #USART_CR1]
+    LDR R2, =0xFFFF
+    BIC R1, R1, R2    /* Reset CR1 */
+    ORR R1, R1, #(1<<13)    /* UE */
+    ORR R1, R1, #(1<<3)     /* TE */
+    STR R1, [R0, #USART_CR1]
 
+    POP {PC}
+
+
+/* ==============================================================================
+   UART SEND CHAR
+   Input: R0 (Character to send)
+   ============================================================================== */
 UART_SendChar:
-// WAITING 
-LDR R2,=USART2_BASE
-wait_loop:
-    LDR R1,[R2,#USART_SR]
-    TST R1,#(1<<7)
-    BEQ wait_loop
+    LDR R2, =USART2_BASE
 
-//  SEND THE DATA
-STR R0,[R2,#USART_DR]
-BX LR
+wait_loop:
+    LDR R1, [R2, #USART_SR]
+    TST R1, #(1<<7)         /* Check TXE (Transmit Data Register Empty) */
+    BEQ wait_loop           /* If 0, wait */
+
+    STR R0, [R2, #USART_DR] /* Send Data */
+    BX LR

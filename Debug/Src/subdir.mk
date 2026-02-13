@@ -9,7 +9,6 @@ S_SRCS += \
 ../Src/DMA.s \
 ../Src/Itoa.s \
 ../Src/Tim2.s \
-../Src/adctest.s \
 ../Src/lab_uart.s \
 ../Src/main.s 
 
@@ -22,7 +21,6 @@ OBJS += \
 ./Src/DMA.o \
 ./Src/Itoa.o \
 ./Src/Tim2.o \
-./Src/adctest.o \
 ./Src/lab_uart.o \
 ./Src/main.o \
 ./Src/syscalls.o \
@@ -33,7 +31,6 @@ S_DEPS += \
 ./Src/DMA.d \
 ./Src/Itoa.d \
 ./Src/Tim2.d \
-./Src/adctest.d \
 ./Src/lab_uart.d \
 ./Src/main.d 
 
@@ -51,7 +48,7 @@ Src/%.o Src/%.su Src/%.cyclo: ../Src/%.c Src/subdir.mk
 clean: clean-Src
 
 clean-Src:
-	-$(RM) ./Src/ADC.d ./Src/ADC.o ./Src/DMA.d ./Src/DMA.o ./Src/Itoa.d ./Src/Itoa.o ./Src/Tim2.d ./Src/Tim2.o ./Src/adctest.d ./Src/adctest.o ./Src/lab_uart.d ./Src/lab_uart.o ./Src/main.d ./Src/main.o ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+	-$(RM) ./Src/ADC.d ./Src/ADC.o ./Src/DMA.d ./Src/DMA.o ./Src/Itoa.d ./Src/Itoa.o ./Src/Tim2.d ./Src/Tim2.o ./Src/lab_uart.d ./Src/lab_uart.o ./Src/main.d ./Src/main.o ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
 
 .PHONY: clean-Src
 

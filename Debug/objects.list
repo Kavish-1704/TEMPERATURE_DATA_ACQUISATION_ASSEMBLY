@@ -2,7 +2,6 @@
 "./Src/DMA.o"
 "./Src/Itoa.o"
 "./Src/Tim2.o"
-"./Src/adctest.o"
 "./Src/lab_uart.o"
 "./Src/main.o"
 "./Src/syscalls.o"
