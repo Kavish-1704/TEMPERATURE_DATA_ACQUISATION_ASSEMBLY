@@ -1,0 +1,99 @@
+
+.syntax unified
+.thumb
+.cpu cortex-m4
+
+.equ RCC_BASE, 0x40023800
+.equ RCC_APB2ENR, 0x44
+
+.equ ADC1_BASE, 0x40012000
+.equ ADC_SMPR1, 0x0C
+.equ ADC_SQR3, 0x34
+.equ ADC_CR2, 0x08
+.equ ADC_SR, 0x00
+.equ ADC_DR, 0x4C
+.equ ADC_CCR, 0x304
+.global adc_init
+.global adc_read
+.global adc_convert
+.global adc_main
+.global adc_start
+
+adc_init:
+PUSH {LR}
+
+	LDR R0, =RCC_BASE
+	LDR R1, [R0,#RCC_APB2ENR]
+	ORR R1, R1,#(1<<8)
+	STR R1, [R0,#RCC_APB2ENR]
+
+// SETTING THE SAMPLING TIME FOR THE CHANNEL 18 
+
+
+
+
+LDR R0, =ADC1_BASE
+LDR R1, [R0,#ADC_SMPR1]
+ORR R1, R1, #(7<<24)
+STR R1, [R0,#ADC_SMPR1]
+
+
+//SETTING THE SEQUENCE 
+LDR R0 , = ADC1_BASE
+LDR R1, [R0,#ADC_SQR3]
+ORR R1, R1, #(18<<0)
+STR R1, [R0,#ADC_SQR3]
+
+LDR R2, =ADC_CCR 
+
+LDR R1, [R0, R2]
+ORR R1, R1, #(1 << 23)      
+STR R1, [R0,R2]
+
+LDR R1,[R0,#ADC_CR2]
+
+// ENABLING EXTERNAL TRIGGER EXTEN
+
+LDR R2, =(1<<28)
+    ORR R1, R1, R2
+BIC R1,R1,#(1<<29)
+
+// SELECT TIMER 2 TRGO EXTSEL
+LDR R2, =(1<<29)
+    BIC R1, R1, R2
+
+    LDR R2, =(0xF << 24)
+    BIC R1, R1, R2
+LDR R2, =(6 << 24)
+    ORR R1, R1, R2
+// ENABLING THE DMA MODE 
+ORR R1,R1,#(1<<8)
+ORR R1,R1,#(1<<9)
+
+ORR R1,R1,#(1<<0)
+STR R1,[R0,#ADC_CR2]
+
+POP {PC}
+
+
+
+adc_convert:
+
+PUSH {R4,LR}
+
+// CONVERTING THE RAW VOLTAGE TO MILIVOLTS
+LDR R1, = 3300// AS 3.3 V IS THE HIGH POINT OF OUT MCU
+MUL R0, R0 ,R1
+
+LDR R1, = 4095
+UDIV R0, R0,R1
+
+SUB R0 , R0 , #760
+
+LSL R0, R0 , #1 
+
+MOV R1, #5
+SDIV R0 , R0 , R1 
+
+ADD R0, R0, #25
+POP {R4,PC}
