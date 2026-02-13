@@ -46,4 +46,28 @@ Ensure you have Python installed, then set up the environment:
 pip install -r requirements.txt
 
 # Run the plotter
+
+## 📂 Project Structure
+* **`Src/main.s`**: The entry point. Handles the main infinite loop, coordinates the "Red Light/Green Light" synchronization between CPU and DMA, and triggers data transmission.
+* **`Src/DMA.s`**: Configures Direct Memory Access (DMA2 for ADC, DMA1 for UART) to handle data transfer without CPU intervention.
+* **`Src/ADC.s`**: Sets up the Analog-to-Digital Converter to read the internal temperature sensor.
+* **`Src/lab_uart.s`**: Low-level UART driver to handle serial communication with the host computer.
+* **`Src/Tim2.s`**: Configures hardware Timer 2 to trigger ADC conversions at a precise 100Hz frequency.
+* **`Src/Itoa.s`**: Custom assembly routine to convert raw Integer values into ASCII strings for UART transmission.
+* **`plot_temp.py`**: Python script using `matplotlib` and `pyserial` to visualize the temperature data in real-time.
+* **`requirements.txt`**: List of Python dependencies required to run the plotter.
+
+## 🐛 Challenges Solved
+* **Race Condition (Data Corruption):** Initially, the system outputted glitchy values (e.g., "1121" instead of "23") because the CPU was updating the buffer while the UART DMA was still reading it. 
+    * *Solution:* Implemented a "Busy Flag" check (Semaphore) to force the CPU to wait until the previous UART transmission is complete before touching the buffer.
+* **DMA Bus Faults:** Encountered hard faults when writing to DMA control registers.
+    * *Solution:* Implemented a "Wait for Disable" subroutine to ensure the DMA stream is fully disabled and the hardware is ready before attempting reconfiguration.
+* **IDE & Console Crashes:** The UART was initially transmitting data too rapidly, overflowing the buffer and crashing the IDE.
+    * *Solution:* Optimized the main loop timing and added appropriate delays to stabilize the data stream.
+* **Cross-Platform Visualization:**
+    * *Solution:* Created a robust Python script that auto-detects the specific STM32 USB port on macOS/Linux and handles real-time plotting via a Virtual Environment.
+
+## 📜 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 python plot_temp.py
+
