@@ -2,7 +2,7 @@
 
 A bare-metal embedded system that reads temperature data using **pure Assembly Language** and visualizes it in real-time using Python.
 
-![Project Graph](src/TEMP1.png) 
+![Project Graph](Src/TEMP1.png) 
 *(Add a screenshot of your Python plot here!)*
 
 ## 🚀 Project Overview
